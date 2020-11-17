@@ -10,7 +10,97 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const managerQ = [
+  {
+    type: "input",
+    name: "managerName",
+    message: "What is the manager's name?",
+  },
+  {
+    type: "number",
+    name: "managerID",
+    message: "What is the manager's ID Number?",
+  },
+  {
+    type: "input",
+    name: "managerEmail",
+    message: "What is the manager's email Address?",
+  },
+  {
+    type: "input",
+    name: "managerOffice",
+    message: "What is the manager's Office Number?",
+  },
+];
+const promptQ = [
+  {
+    type: "list",
+    name: "nextQuestion",
+    message: "Add more Employees to the page?",
+    choices: [
+      "Add an Engineer",
+      "Add an Intern",
+      "Don't add any more employees and generate my webpage!",
+    ],
+  },
+];
+const internQ = [
+  {
+    type: "input",
+    name: "internName",
+    message: "What is the intern's name?",
+  },
+  {
+    type: "number",
+    name: "managerID",
+    message: "What is the intern's ID Number?",
+  },
+  {
+    type: "input",
+    name: "internEmail",
+    message: "What is the intern's email Address?",
+  },
+  {
+    type: "input",
+    name: "internSchool",
+    message: "Where does the intern go to school?",
+  },
+];
+const engineerQ = [
+  {
+    type: "input",
+    name: "engineerName",
+    message: "What is the engineer's name?",
+  },
+  {
+    type: "number",
+    name: "engineerID",
+    message: "What is the engineer's ID Number?",
+  },
+  {
+    type: "input",
+    name: "engineerEmail",
+    message: "What is the engineer's email Address?",
+  },
+  {
+    type: "input",
+    name: "engineerOffice",
+    message: "What is the engineer's Office Number?",
+  },
+];
 
+function prompter() {
+  const output = [];
+  inquirer.prompt(promptQ).then((answer) => {
+    if (answer.nextQuestion === "Add an Engineer") {
+      engineerBuilder();
+    } else if (answer.nextQuestion === "Add an Intern") {
+      internBuilder();
+    } else {
+      return;
+    }
+  });
+}
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
