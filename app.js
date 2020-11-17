@@ -89,16 +89,20 @@ const engineerQ = [
   },
 ];
 
+//prompter calls itself so that any amount of engineers or interns can be added.
 function prompter() {
   const engineersArr = [];
   const internsArr = [];
   inquirer.prompt(promptQ).then((answer) => {
     if (answer.nextQuestion === "Add an Engineer") {
       engineersArr.push(engineerBuilder());
+      prompter();
     } else if (answer.nextQuestion === "Add an Intern") {
       internsArr.push(internBuilder());
+      prompter();
     } else {
-      return { engineers: engineersArr, interns: internsArr };
+      // engineers and interns are seperated into two arrays to make sure that the engineers always come before interns so the engineers don't get grumpy.
+      return [...engineersArr, ...internsArr];
     }
   });
 }
@@ -123,6 +127,16 @@ function internBuilder() {
   });
 }
 
+inquirer.prompt(managerQ).then((answers) => {
+  const manager = new Manager(
+    answers.managerName,
+    answers.managerID,
+    answers.managerEmail,
+    answers.managerOffice
+  );
+  const myHTML = render([manager, ...prompter()]);
+  fs.writeFile("./output/team.html", myHTML, "text/html");
+});
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
