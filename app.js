@@ -84,21 +84,32 @@ const engineerQ = [
   },
   {
     type: "input",
-    name: "engineerOffice",
-    message: "What is the engineer's Office Number?",
+    name: "engineerGithub",
+    message: "What is the engineer's Github username?",
   },
 ];
 
 function prompter() {
-  const output = [];
+  const engineersArr = [];
+  const internsArr = [];
   inquirer.prompt(promptQ).then((answer) => {
     if (answer.nextQuestion === "Add an Engineer") {
-      engineerBuilder();
+      engineersArr.push(engineerBuilder());
     } else if (answer.nextQuestion === "Add an Intern") {
-      internBuilder();
+      internsArr.push(internBuilder());
     } else {
-      return;
+      return { engineers: engineersArr, interns: internsArr };
     }
+  });
+}
+function engineerBuilder() {
+  inquirer.prompt(engineerQ).then((answers) => {
+    return new Engineer(
+      answers.engineerName,
+      answers.engineerID,
+      answers.engineerEmail,
+      answers.engineerGithub
+    );
   });
 }
 // Write code to use inquirer to gather information about the development team members,
