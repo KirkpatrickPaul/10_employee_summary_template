@@ -52,7 +52,7 @@ const internQ = [
   },
   {
     type: "number",
-    name: "managerID",
+    name: "internID",
     message: "What is the intern's ID Number?",
   },
   {
@@ -90,42 +90,63 @@ const engineerQ = [
 ];
 
 //prompter calls itself so that any amount of engineers or interns can be added.
-function prompter() {
-  const engineersArr = [];
-  const internsArr = [];
+async function prompter(manager, engineers, interns) {
   inquirer.prompt(promptQ).then((answer) => {
     if (answer.nextQuestion === "Add an Engineer") {
-      engineersArr.push(engineerBuilder());
-      prompter();
+      const engineersArr = engineers;
+      inquirer.prompt(engineerQ).then((answers) => {
+        const newEngineer = new Engineer(
+          answers.engineerName,
+          answers.engineerID,
+          answers.engineerEmail,
+          answers.engineerGithub
+        );
+        engineersArr.push(newEngineer);
+        prompter(manager, engineersArr, interns);
+      });
     } else if (answer.nextQuestion === "Add an Intern") {
-      internsArr.push(internBuilder());
-      prompter();
+      const internsArr = interns;
+      inquirer.prompt(internQ).then((answers) => {
+        const newIntern = new Intern(
+          answers.internName,
+          answers.internID,
+          answers.internEmail,
+          answers.internSchool
+        );
+        internsArr.push(newIntern);
+        prompter(manager, engineers, internsArr);
+      });
     } else {
       // engineers and interns are seperated into two arrays to make sure that the engineers always come before interns so the engineers don't get grumpy.
-      return [...engineersArr, ...internsArr];
+      const myHTML = render([manager, ...engineers, ...interns]);
+      fs.writeFileSync("./output/team.html", myHTML);
+
+      return;
     }
   });
 }
-function engineerBuilder() {
-  inquirer.prompt(engineerQ).then((answers) => {
-    return new Engineer(
-      answers.engineerName,
-      answers.engineerID,
-      answers.engineerEmail,
-      answers.engineerGithub
-    );
-  });
-}
-function internBuilder() {
-  inquirer.prompt(internQ).then((answers) => {
-    return new Intern(
-      answers.internName,
-      answers.internID,
-      answers.internEmail,
-      answers.internSchool
-    );
-  });
-}
+// async function engineerBuilder() {
+//   inquirer.prompt(engineerQ).then((answers) => {
+//     return Promise.resolve(
+//       new Engineer(
+//         answers.engineerName,
+//         answers.engineerID,
+//         answers.engineerEmail,
+//         answers.engineerGithub
+//       )
+//     );
+//   });
+// }
+// async function internBuilder() {
+//   inquirer.prompt(internQ).then((answers) => {
+//     new Intern(
+//       answers.internName,
+//       answers.internID,
+//       answers.internEmail,
+//       answers.internSchool
+//     );
+//   });
+// }
 
 inquirer.prompt(managerQ).then((answers) => {
   const manager = new Manager(
@@ -134,8 +155,7 @@ inquirer.prompt(managerQ).then((answers) => {
     answers.managerEmail,
     answers.managerOffice
   );
-  const myHTML = render([manager, ...prompter()]);
-  fs.writeFile("./output/team.html", myHTML, "text/html");
+  prompter(manager, [], []);
 });
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
