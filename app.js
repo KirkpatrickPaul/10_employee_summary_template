@@ -112,6 +112,17 @@ function engineerBuilder() {
     );
   });
 }
+function internBuilder() {
+  inquirer.prompt(internQ).then((answers) => {
+    return new Intern(
+      answers.internName,
+      answers.internID,
+      answers.internEmail,
+      answers.internSchool
+    );
+  });
+}
+
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
