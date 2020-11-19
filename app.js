@@ -88,6 +88,14 @@ const engineerQ = [
     message: "What is the engineer's Github username?",
   },
 ];
+const nameQ = [
+  {
+    type: "input",
+    name: "htmlName",
+    message: `What would you like your html to be named? (Don't include ".html" at the end).`,
+    default: "team",
+  },
+];
 
 //prompter calls itself so that any amount of engineers or interns can be added.
 //I ended up having to add all 3 types of employee so that each array or object carries over into the next iteration without modifying objects in the global scope.
@@ -118,10 +126,11 @@ async function prompter(manager, engineers, interns) {
         prompter(manager, engineers, internsArr);
       });
     } else {
-      // engineers and interns are seperated into two arrays to make sure that the engineers always come before interns so the engineers don't get grumpy.
-      const myHTML = render([manager, ...engineers, ...interns]);
-      fs.writeFileSync("./output/team.html", myHTML);
-
+      inquirer.prompt(nameQ).then((answer) => {
+        // engineers and interns are seperated into two arrays to make sure that the engineers always come before interns so the engineers don't get grumpy.
+        const myHTML = render([manager, ...engineers, ...interns]);
+        fs.writeFileSync(`./output/${answer.htmlName}.html`, myHTML);
+      });
       return;
     }
   });
