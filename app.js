@@ -10,6 +10,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+// all questions to be passed into inquirer have a Q at the end.
 const managerQ = [
   {
     type: "input",
@@ -97,8 +98,9 @@ const nameQ = [
   },
 ];
 
-//prompter calls itself so that any amount of engineers or interns can be added.
-//I ended up having to add all 3 types of employee so that each array or object carries over into the next iteration without modifying objects in the global scope.
+// prompter calls itself so that any amount of engineers or interns can be added.
+// I ended up having to add all 3 types of employee in the same function
+// so that each array or object carries over into the next iteration without modifying objects in the global scope.
 async function prompter(manager, engineers, interns) {
   inquirer.prompt(promptQ).then((answer) => {
     if (answer.nextQuestion === "Add an Engineer") {
@@ -144,5 +146,6 @@ inquirer.prompt(managerQ).then((answers) => {
     answers.managerEmail,
     answers.managerOffice
   );
+  // the engineers and interns arrays start empty
   prompter(manager, [], []);
 });
